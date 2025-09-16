@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Registrar Venta</h2>
+<form method="post" class="space-y-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Registrar</button>
+  <a href="{% url 'ventas:lista_productos' %}" class="ml-2">Cancelar</a>
+</form>
+{% endblock %}
