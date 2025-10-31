@@ -8,14 +8,15 @@
 <body class="bg-gray-100 text-gray-800">
   <nav class="bg-white shadow p-4 flex space-x-4">
     <a href="{% url 'ventas:lista_productos' %}" class="font-bold text-blue-600">Mi Tienda</a>
-    <a href="{% url 'ventas:lista_productos' %}">Productos</a>
-    <a href="{% url 'ventas:registrar_venta' %}">Registrar Venta</a>
-    <a href="/admin/">Admin</a>
+    <a href="{% url 'ventas:lista_productos' %}" class="hover:text-blue-600">Productos</a>
+    <a href="{% url 'ventas:registrar_venta' %}" class="hover:text-blue-600">Registrar Venta</a>
+    <a href="{% url 'ventas:lista_ventas' %}" class="hover:text-blue-600">📊 Ventas</a>
+    <a href="/admin/" class="hover:text-blue-600">Admin</a>
   </nav>
   <main class="p-6">
     {% if messages %}
       {% for message in messages %}
-        <div class="p-2 mb-2 rounded bg-green-200">{{ message }}</div>
+        <div class="p-2 mb-2 rounded {% if message.tags == 'error' %}bg-red-200 text-red-800{% else %}bg-green-200{% endif %}">{{ message }}</div>
       {% endfor %}
     {% endif %}
     {% block content %}{% endblock %}

@@ -1,10 +1,148 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2 class="text-xl font-bold mb-4">Registrar Venta</h2>
-<form method="post" class="space-y-3">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Registrar</button>
-  <a href="{% url 'ventas:lista_productos' %}" class="ml-2">Cancelar</a>
-</form>
+<div class="max-w-2xl mx-auto">
+  <h2 class="text-2xl font-bold mb-6 text-gray-800">💰 Registrar Venta</h2>
+  
+  {% if form.non_field_errors %}
+  <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+    <strong>Errores:</strong>
+    <ul class="list-disc list-inside">
+      {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <form method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" id="ventaForm">
+    {% csrf_token %}
+    
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="id_cliente">
+        Cliente Habitual
+      </label>
+      {{ form.cliente }}
+      {% if form.cliente.errors %}
+        <p class="text-red-500 text-xs italic">{{ form.cliente.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div class="border-t pt-4 mb-4">
+      <p class="text-sm text-gray-600 mb-3">O ingresa cliente ocasional:</p>
+      
+      <div class="mb-3">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="id_cliente_rut">
+          {{ form.cliente_rut.label }}
+        </label>
+        {{ form.cliente_rut }}
+        <p class="text-gray-600 text-xs italic mt-1">Formato: 12345678-9 (solo números, guión y dígito verificador)</p>
+        {% if form.cliente_rut.errors %}
+          <p class="text-red-500 text-xs italic">{{ form.cliente_rut.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="id_nombre_cliente">
+          {{ form.nombre_cliente.label }}
+        </label>
+        {{ form.nombre_cliente }}
+        <p class="text-gray-600 text-xs italic mt-1">Solo letras y espacios</p>
+        {% if form.nombre_cliente.errors %}
+          <p class="text-red-500 text-xs italic">{{ form.nombre_cliente.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label class="flex items-center">
+          {{ form.guardar_cliente }}
+          <span class="ml-2 text-sm text-gray-700">{{ form.guardar_cliente.label }}</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="border-t pt-4 mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="id_producto">
+        Producto *
+      </label>
+      {{ form.producto }}
+      {% if form.producto.errors %}
+        <p class="text-red-500 text-xs italic">{{ form.producto.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="id_cantidad">
+        Cantidad *
+      </label>
+      {{ form.cantidad }}
+      <p class="text-gray-600 text-xs italic mt-1">Solo números enteros positivos</p>
+      {% if form.cantidad.errors %}
+        <p class="text-red-500 text-xs italic">{{ form.cantidad.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div class="flex items-center justify-between">
+      <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-200">
+        💰 Registrar Venta
+      </button>
+      <a href="{% url 'ventas:lista_productos' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-200">
+        ✖ Cancelar
+      </a>
+    </div>
+  </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const rutInput = document.getElementById('id_cliente_rut');
+    const nombreInput = document.getElementById('id_nombre_cliente');
+    const cantidadInput = document.getElementById('id_cantidad');
+    
+    // Validación de RUT en tiempo real
+    if (rutInput) {
+        rutInput.addEventListener('input', function(e) {
+            let value = e.target.value;
+            // Eliminar todo excepto números, K y guión
+            value = value.replace(/[^0-9Kk\-]/g, '');
+            e.target.value = value;
+        });
+        
+        rutInput.addEventListener('blur', function(e) {
+            let value = e.target.value.trim();
+            if (value && !/^[0-9]{7,8}-[0-9Kk]$/.test(value)) {
+                e.target.classList.add('border-red-500');
+            } else {
+                e.target.classList.remove('border-red-500');
+            }
+        });
+    }
+    
+    // Validación de nombre en tiempo real
+    if (nombreInput) {
+        nombreInput.addEventListener('input', function(e) {
+            let value = e.target.value;
+            // Eliminar números y caracteres especiales excepto espacios
+            value = value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ ]/g, '');
+            e.target.value = value;
+        });
+    }
+    
+    // Validación de cantidad en tiempo real
+    if (cantidadInput) {
+        cantidadInput.addEventListener('input', function(e) {
+            let value = e.target.value;
+            // Solo permitir números
+            value = value.replace(/[^0-9]/g, '');
+            e.target.value = value;
+        });
+        
+        cantidadInput.addEventListener('blur', function(e) {
+            let value = parseInt(e.target.value);
+            if (value && value < 1) {
+                e.target.value = 1;
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

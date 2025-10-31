@@ -1,10 +1,39 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2 class="text-xl font-bold">Eliminar Producto</h2>
-<p>¿Seguro que deseas eliminar <strong>{{ producto.nombre }}</strong>?</p>
-<form method="post">
-  {% csrf_token %}
-  <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Eliminar</button>
-  <a href="{% url 'ventas:lista_productos' %}" class="ml-2">Cancelar</a>
-</form>
+<div class="max-w-2xl mx-auto">
+  <h2 class="text-2xl font-bold mb-6 text-red-600">⚠️ Eliminar Producto</h2>
+  
+  <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div class="mb-6">
+      <p class="text-lg mb-4">¿Estás seguro que deseas eliminar este producto?</p>
+      
+      <div class="bg-gray-100 p-4 rounded mb-4">
+        <p><strong>Nombre:</strong> {{ producto.nombre }}</p>
+        <p><strong>Código:</strong> {{ producto.codigo }}</p>
+        <p><strong>Stock:</strong> {{ producto.cantidad }} unidades</p>
+        <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+      </div>
+
+      {% if producto.venta_set.count > 0 %}
+      <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+        <p class="font-bold">⚠️ Advertencia</p>
+        <p>Este producto tiene <strong>{{ producto.venta_set.count }}</strong> venta(s) registrada(s).</p>
+        <p class="text-sm mt-2">No podrás eliminarlo hasta que elimines las ventas asociadas.</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="flex items-center justify-between">
+        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-200">
+          🗑️ Sí, Eliminar
+        </button>
+        <a href="{% url 'ventas:lista_productos' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-200">
+          ✖ Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}

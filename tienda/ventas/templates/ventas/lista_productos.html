@@ -1,33 +1,84 @@
 {% extends 'base.html' %}
 {% block title %}Productos{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-bold mb-4">Lista de Productos</h1>
-<a href="{% url 'ventas:nuevo_producto' %}" class="bg-blue-500 text-white px-3 py-1 rounded">Nuevo Producto</a>
-<table class="table-auto w-full mt-4 border">
-  <thead>
-    <tr class="bg-gray-200">
-      <th class="px-2">Nombre</th>
-      <th class="px-2">Código</th>
-      <th class="px-2">Stock</th>
-      <th class="px-2">Precio</th>
-      <th class="px-2">Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for p in productos %}
-    <tr class="border-t">
-      <td class="px-2">{{ p.nombre }}</td>
-      <td class="px-2">{{ p.codigo }}</td>
-      <td class="px-2">{{ p.cantidad }}</td>
-      <td class="px-2">${{ p.precio }}</td>
-      <td class="px-2">
-        <a href="{% url 'ventas:editar_producto' p.pk %}" class="text-yellow-600">Editar</a> |
-        <a href="{% url 'ventas:eliminar_producto' p.pk %}" class="text-red-600">Eliminar</a>
-      </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="5" class="text-center">No hay productos.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="container mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">📦 Lista de Productos</h1>
+    <a href="{% url 'ventas:nuevo_producto' %}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded inline-flex items-center transition duration-200">
+      <span class="mr-2">➕</span> Nuevo Producto
+    </a>
+  </div>
+
+  {% if productos %}
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-800 text-white">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Nombre</th>
+          <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Código</th>
+          <th class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Stock</th>
+          <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">Precio</th>
+          <th class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        {% for p in productos %}
+        <tr class="hover:bg-gray-50 transition duration-150">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">{{ p.nombre }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-500">{{ p.codigo }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-center">
+            {% if p.cantidad == 0 %}
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                Sin stock
+              </span>
+            {% elif p.cantidad < 10 %}
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                {{ p.cantidad }}
+              </span>
+            {% else %}
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                {{ p.cantidad }}
+              </span>
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900">
+            ${{ p.precio|floatformat:0 }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+            <a href="{% url 'ventas:editar_producto' p.pk %}" class="text-indigo-600 hover:text-indigo-900 mr-3">
+              ✏️ Editar
+            </a>
+            <a href="{% url 'ventas:eliminar_producto' p.pk %}" class="text-red-600 hover:text-red-900">
+              🗑️ Eliminar
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="mt-4 text-gray-600">
+    Total de productos: <strong>{{ productos|length }}</strong>
+  </div>
+  {% else %}
+  <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <span class="text-2xl">📦</span>
+      </div>
+      <div class="ml-3">
+        <p class="text-sm text-yellow-700">
+          No hay productos registrados. 
+          <a href="{% url 'ventas:nuevo_producto' %}" class="font-medium underline">Crea el primero aquí</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
 {% endblock %}

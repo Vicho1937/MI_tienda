@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+from decimal import Decimal
 
 class Cliente(models.Model):
     rut = models.CharField(max_length=12, unique=True)
@@ -7,16 +9,36 @@ class Cliente(models.Model):
 
     def __str__(self):
         return f"{self.rut} - {self.nombre or 'Cliente ocasional'}"
+    
+    class Meta:
+        ordering = ['-habitual', 'nombre']
 
 
 class Producto(models.Model):
-    nombre = models.CharField(max_length=100)
-    codigo = models.CharField(max_length=20, unique=True)
-    cantidad = models.PositiveIntegerField(default=0)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    nombre = models.CharField(max_length=100, verbose_name="Nombre del Producto")
+    codigo = models.CharField(
+        max_length=20, 
+        unique=True,
+        verbose_name="Código",
+        help_text="Máximo 20 caracteres"
+    )
+    cantidad = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(999999)],
+        verbose_name="Stock"
+    )
+    precio = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))],
+        verbose_name="Precio (CLP)"
+    )
 
     def __str__(self):
         return f"{self.nombre} ({self.codigo})"
+    
+    class Meta:
+        ordering = ['nombre']
 
 
 class Venta(models.Model):
