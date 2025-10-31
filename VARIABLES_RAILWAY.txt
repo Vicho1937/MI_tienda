@@ -1,0 +1,38 @@
+# ⚡ RESUMEN RÁPIDO - Variables Railway
+
+## 📋 Copiar y Pegar en Railway → Variables
+
+```
+user=postgres.eqvpkknjgfzeoxibqype
+password=Vicho.01112005
+host=aws-1-us-east-2.pooler.supabase.com
+port=6543
+dbname=postgres
+SECRET_KEY=prod-mi-tienda-2025-x9k2m4n5p6q7r8s9t0-secure-key-railway
+DEBUG=False
+ALLOWED_HOSTS=mitienda-production.up.railway.app,localhost,127.0.0.1
+PORT=8000
+RAILWAY_ENVIRONMENT=production
+PYTHONUNBUFFERED=1
+```
+
+## 🚀 Desplegar
+
+```bash
+git add .
+git commit -m "Deploy a Railway"
+git push origin main
+```
+
+## ✅ Verificar
+- Dominio: https://mitienda-production.up.railway.app
+- Admin: https://mitienda-production.up.railway.app/admin
+
+## 📝 Crear Superusuario (si es necesario)
+
+Desde Railway CLI:
+```bash
+railway run python tienda/manage.py createsuperuser
+```
+
+O desde la consola de Railway web.
