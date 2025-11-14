@@ -3,8 +3,10 @@ from django.contrib import messages
 from django.db.models import ProtectedError, Sum, Count
 from django.http import HttpResponse
 from django.utils import timezone
+from rest_framework import viewsets, permissions
 from .models import Producto, Cliente, Venta
 from .forms import ProductoForm, VentaForm
+from .serializers import ProductoSerializer
 import csv
 
 def lista_productos(request):
@@ -228,3 +230,8 @@ def exportar_ventas_csv(request):
     writer.writerow(['Monto total:', f"${total_general:,.0f}"])
     
     return response
+
+class ProductoViewSet(viewsets.ModelViewSet):
+    queryset = Producto.objects.all().order_by("nombre")
+    serializer_class = ProductoSerializer
+    permission_classes = [permissions.IsAuthenticated]
